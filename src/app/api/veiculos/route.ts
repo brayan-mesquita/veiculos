@@ -13,7 +13,8 @@ export async function GET(request: NextRequest) {
     const marca = searchParams.get("marca");
     const modelo = searchParams.get("modelo");
     
-    let query = db.select().from(veiculos);
+    // Tipagem relaxada aqui para permitir encadeamento condicional de where
+    let query: any = db.select().from(veiculos);
     
     if (marca) {
       query = query.where(eq(veiculos.marca, marca));
@@ -44,10 +45,11 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const result = await db.insert(veiculos).values(body);
+    // Inserir o veículo no banco de dados
+    await db.insert(veiculos).values(body);
     
     return NextResponse.json(
-      { message: "Veículo cadastrado com sucesso", id: result.lastInsertRowid },
+      { message: "Veículo cadastrado com sucesso" },
       { status: 201 }
     );
   } catch (error) {

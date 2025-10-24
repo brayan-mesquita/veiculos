@@ -19,3 +19,13 @@ export const veiculos = sqliteTable("veiculos", {
   createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(strftime('%s', 'now'))`),
   updatedAt: integer("updated_at", { mode: "timestamp" }).default(sql`(strftime('%s', 'now'))`),
 });
+
+export const apiTokens = sqliteTable("api_tokens", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  token: text("token").notNull().unique(),
+  nome: text("nome").notNull(),
+  descricao: text("descricao"),
+  ativo: integer("ativo", { mode: "boolean" }).notNull().default(true),
+  createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(strftime('%s', 'now'))`),
+  ultimoUso: integer("ultimo_uso", { mode: "timestamp" }),
+});

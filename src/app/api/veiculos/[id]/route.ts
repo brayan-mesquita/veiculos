@@ -54,18 +54,27 @@ export async function PUT(
     
     const body = await request.json();
     
-    // Atualiza o timestamp
-    body.updatedAt = Math.floor(Date.now() / 1000);
-    
+    // Remover campos que não devem ser atualizados diretamente
+    const { id: bodyId, createdAt, created_at, created_at: _ca, ...updates } = body as any;
+
+    // Atualiza o timestamp de atualização
+    updates.updatedAt = Math.floor(Date.now() / 1000);
+
+    // Se houver campo 'fotos' como array, stringify para armazenar como JSON no DB
+    if (updates.fotos && Array.isArray(updates.fotos)) {
+      updates.fotos = JSON.stringify(updates.fotos);
+    }
+
     await db.update(veiculos)
-      .set(body)
+      .set(updates)
       .where(eq(veiculos.id, id));
     
     return NextResponse.json(
       { message: "Veículo atualizado com sucesso" }
     );
   } catch (error) {
-    console.error("Erro ao atualizar veículo:", error);
+    // Log mais detalhado para ajudar no diagnóstico
+    console.error("Erro ao atualizar veículo (detalhe):", error instanceof Error ? error.message : error, error);
     return NextResponse.json(
       { error: "Erro ao atualizar veículo" },
       { status: 500 }
