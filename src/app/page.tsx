@@ -2,9 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from 'next/link';
+import { motion } from "framer-motion";
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Car, DollarSign, BarChart3, Tag } from "lucide-react";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { Skeleton } from "@/components/Skeleton";
+import { EmptyState } from "@/components/EmptyState";
+import { cn } from "@/lib/utils";
 
 interface Veiculo {
   id: number;
@@ -27,7 +31,14 @@ interface AnoCount {
   value: number;
 }
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8", "#82CA9D"];
+const CHART_COLORS = [
+  "#3b82f6",
+  "#84cc16",
+  "#f97316",
+  "#f59e0b",
+  "#8b5cf6",
+  "#ef4444",
+];
 
 export default function Home() {
   const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
@@ -89,6 +100,24 @@ export default function Home() {
     });
   }
 
+function DashboardSkeleton() {
+  return (
+    <>
+      <div className="mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Skeleton className="h-24" />
+        <Skeleton className="h-24" />
+        <Skeleton className="h-24" />
+        <Skeleton className="h-24" />
+      </div>
+      <div className="mb-8 grid gap-6 lg:grid-cols-2">
+        <Skeleton className="h-80" />
+        <Skeleton className="h-80" />
+      </div>
+      <Skeleton className="h-64" />
+    </>
+  );
+}
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border">
@@ -113,13 +142,17 @@ export default function Home() {
       
       <main className="container mx-auto px-4 py-8">
         {loading ? (
-          <div className="flex h-40 items-center justify-center">
-            <p className="text-muted-foreground">Carregando dados...</p>
-          </div>
+          <DashboardSkeleton />
+        ) : veiculos.length === 0 ? (
+          <EmptyState />
         ) : (
-          <>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <div className="mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+              <motion.div whileHover={{ scale: 1.05 }} className="rounded-lg border border-border bg-card p-6 shadow-sm transition-transform">
                 <div className="flex items-center gap-4">
                   <div className="rounded-full bg-primary/10 p-3">
                     <Car className="h-6 w-6 text-primary" />
@@ -129,9 +162,9 @@ export default function Home() {
                     <h3 className="text-2xl font-bold">{veiculos.length}</h3>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+              <motion.div whileHover={{ scale: 1.05 }} className="rounded-lg border border-border bg-card p-6 shadow-sm transition-transform">
                 <div className="flex items-center gap-4">
                   <div className="rounded-full bg-primary/10 p-3">
                     <DollarSign className="h-6 w-6 text-primary" />
@@ -141,9 +174,9 @@ export default function Home() {
                     <h3 className="text-2xl font-bold">{formatarPreco(calcularValorTotal())}</h3>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+              <motion.div whileHover={{ scale: 1.05 }} className="rounded-lg border border-border bg-card p-6 shadow-sm transition-transform">
                 <div className="flex items-center gap-4">
                   <div className="rounded-full bg-primary/10 p-3">
                     <Tag className="h-6 w-6 text-primary" />
@@ -153,9 +186,9 @@ export default function Home() {
                     <h3 className="text-2xl font-bold">{marcasData.length}</h3>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+              <motion.div whileHover={{ scale: 1.05 }} className="rounded-lg border border-border bg-card p-6 shadow-sm transition-transform">
                 <div className="flex items-center gap-4">
                   <div className="rounded-full bg-primary/10 p-3">
                     <BarChart3 className="h-6 w-6 text-primary" />
@@ -167,11 +200,11 @@ export default function Home() {
                     </h3>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
 
             <div className="mb-8 grid gap-6 lg:grid-cols-2">
-              <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+              <motion.div whileHover={{ scale: 1.02 }} className="rounded-lg border border-border bg-card p-6 shadow-sm transition-transform">
                 <h3 className="mb-4 text-lg font-semibold">Veículos por Marca</h3>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -187,16 +220,16 @@ export default function Home() {
                         dataKey="value"
                       >
                         {marcasData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                         ))}
                       </Pie>
                       <Tooltip formatter={(value) => [`${value} veículos`, 'Quantidade']} />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+              <motion.div whileHover={{ scale: 1.02 }} className="rounded-lg border border-border bg-card p-6 shadow-sm transition-transform">
                 <h3 className="mb-4 text-lg font-semibold">Veículos por Ano</h3>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -213,14 +246,14 @@ export default function Home() {
                       <XAxis dataKey="name" />
                       <YAxis />
                       <Tooltip formatter={(value) => [`${value} veículos`, 'Quantidade']} />
-                      <Bar dataKey="value" fill="#8884d8" />
+                      <Bar dataKey="value" fill={CHART_COLORS[0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-              </div>
+              </motion.div>
             </div>
 
-            <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+            <motion.div whileHover={{ scale: 1.01 }} className="rounded-lg border border-border bg-card p-6 shadow-sm transition-transform">
               <h3 className="mb-4 text-lg font-semibold">Veículos Recentes</h3>
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -233,8 +266,14 @@ export default function Home() {
                     </tr>
                   </thead>
                   <tbody>
-                    {veiculos.slice(0, 5).map((veiculo) => (
-                      <tr key={veiculo.id} className="border-b border-border">
+                    {veiculos.slice(0, 5).map((veiculo, index) => (
+                      <tr
+                        key={veiculo.id}
+                        className={cn(
+                          "border-b border-border",
+                          index % 2 === 0 ? "bg-card" : "bg-muted/50"
+                        )}
+                      >
                         <td className="px-4 py-2 text-sm">{veiculo.modelo}</td>
                         <td className="px-4 py-2 text-sm">{veiculo.marca}</td>
                         <td className="px-4 py-2 text-sm">{veiculo.ano}</td>
@@ -244,8 +283,8 @@ export default function Home() {
                   </tbody>
                 </table>
               </div>
-            </div>
-          </>
+            </motion.div>
+          </motion.div>
         )}
       </main>
     </div>
