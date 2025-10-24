@@ -27,7 +27,17 @@ export async function GET(
       );
     }
     
-    return NextResponse.json(result[0]);
+    const veiculo = result[0];
+
+    // Converter Date objects para timestamps
+    if (veiculo.createdAt instanceof Date) {
+      veiculo.createdAt = Math.floor(veiculo.createdAt.getTime() / 1000);
+    }
+    if (veiculo.updatedAt instanceof Date) {
+      veiculo.updatedAt = Math.floor(veiculo.updatedAt.getTime() / 1000);
+    }
+
+    return NextResponse.json(veiculo);
   } catch (error) {
     console.error("Erro ao buscar veículo:", error);
     return NextResponse.json(
@@ -55,10 +65,10 @@ export async function PUT(
     const body = await request.json();
     
     // Remover campos que não devem ser atualizados diretamente
-    const { id: bodyId, createdAt, created_at, created_at: _ca, ...updates } = body as any;
+    const { ...updates } = body as any;
 
     // Atualiza o timestamp de atualização
-    updates.updatedAt = Math.floor(Date.now() / 1000);
+    updates.updatedAt = new Date();
 
     // Se houver campo 'fotos' como array, stringify para armazenar como JSON no DB
     if (updates.fotos && Array.isArray(updates.fotos)) {

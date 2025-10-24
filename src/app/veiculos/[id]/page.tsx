@@ -75,12 +75,14 @@ export default function EditarVeiculoPage({ params }: { params: { id: string } }
     setSaving(true);
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { createdAt, updatedAt, ...rest } = formData;
       const response = await fetch(`/api/veiculos/${params.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(rest),
       });
 
       if (response.ok) {

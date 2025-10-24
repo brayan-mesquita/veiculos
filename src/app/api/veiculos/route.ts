@@ -25,7 +25,15 @@ export async function GET(request: NextRequest) {
     }
     
     const result = await query;
-    return NextResponse.json(result);
+
+    // Converter Date objects para timestamps
+    const veiculosComTimestamp = result.map(veiculo => ({
+      ...veiculo,
+      createdAt: veiculo.createdAt instanceof Date ? Math.floor(veiculo.createdAt.getTime() / 1000) : veiculo.createdAt,
+      updatedAt: veiculo.updatedAt instanceof Date ? Math.floor(veiculo.updatedAt.getTime() / 1000) : veiculo.updatedAt,
+    }));
+
+    return NextResponse.json(veiculosComTimestamp);
   } catch (error) {
     console.error("Erro ao buscar veículos:", error);
     return NextResponse.json({ error: "Erro ao buscar veículos" }, { status: 500 });
@@ -46,7 +54,12 @@ export async function POST(request: NextRequest) {
     }
     
     // Inserir o veículo no banco de dados
-    await db.insert(veiculos).values(body);
+    await db.insert(veiculos).values({
+      ...body,
+      ano: parseInt(body.ano as string),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
     
     return NextResponse.json(
       { message: "Veículo cadastrado com sucesso" },
