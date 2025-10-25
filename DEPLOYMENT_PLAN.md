@@ -24,59 +24,9 @@ NEXTAUTH_SECRET="your-secret-key-here"
 NEXTAUTH_URL="https://your-domain.com"
 ```
 
-#### 1.2 Atualizar Dockerfile para Migrações
+#### 1.2 Verificar Dockerfile
 
-Para garantir que as migrações do Prisma sejam executadas no deploy, atualize o Dockerfile para incluir o comando de deploy das migrações antes de iniciar a aplicação.
-
-Adicione ao final do Dockerfile (antes do CMD):
-
-```dockerfile
-# Run Prisma migrations
-RUN npx prisma migrate deploy
-
-# Generate Prisma client (if not already done)
-RUN npx prisma generate
-```
-
-O Dockerfile completo deve ser algo como:
-
-```dockerfile
-# Use the official Node.js image
-FROM node:18-alpine
-
-# Install openssl for Prisma
-RUN apk add --no-cache openssl
-
-# Set working directory
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Install all dependencies (including dev for build)
-RUN npm ci
-
-# Copy Prisma schema
-COPY prisma ./prisma
-
-# Generate Prisma client
-RUN npx prisma generate
-
-# Run Prisma migrations
-RUN npx prisma migrate deploy
-
-# Copy the rest of the application code
-COPY . .
-
-# Build the application
-RUN npm run build
-
-# Expose the port the app runs on
-EXPOSE 3000
-
-# Start the application
-CMD ["npm", "start"]
-```
+O Dockerfile atual deve estar configurado para build e start padrão. Não é necessário modificar para migrações, pois isso será feito no comando de start no EasyPanel.
 
 #### 1.3 Commit e Push para GitHub
 
@@ -109,8 +59,8 @@ Certifique-se de que todas as mudanças (incluindo o Dockerfile atualizado) est�
 #### 2.4 Escolher o Método de Build
 
 1. Vá para a aba "Build".
-2. Escolha entre "Nixpacks" (recomendado para detecção automática) ou "Dockerfile" (se preferir usar o Dockerfile personalizado).
-3. Se usar Dockerfile, especifique o caminho relativo para o Dockerfile (geralmente "./Dockerfile").
+2. Escolha "Nixpacks" (recomendado para Next.js, pois detecta automaticamente o comando de build).
+3. Se preferir usar Dockerfile, especifique o caminho relativo (geralmente "./Dockerfile"), mas Nixpacks é mais simples.
 4. Configure conforme necessário e salve.
 5. Clique em "Deploy" para iniciar o processo de deployment.
 
@@ -119,7 +69,14 @@ Certifique-se de que todas as mudanças (incluindo o Dockerfile atualizado) est�
 1. Navegue para a aba "Environment" no serviço da aplicação.
 2. Defina as variáveis de ambiente necessárias (ex: DATABASE_URL, NEXTAUTH_SECRET, NEXTAUTH_URL).
 3. Salve as mudanças.
-4. Pressione "Deploy" para aplicar as configurações.
+
+#### 2.6 Configurar Comando de Start para Migrações
+
+1. Vá para a aba "General" no serviço da aplicação.
+2. No campo "Start Command", defina: `npx prisma migrate deploy && npm start`
+3. Isso garante que as migrações do Prisma sejam executadas antes de iniciar a aplicação.
+4. Salve as mudanças.
+5. Pressione "Deploy" para aplicar as configurações.
 
 #### 2.6 Criar Banco de Dados PostgreSQL (se necessário)
 
