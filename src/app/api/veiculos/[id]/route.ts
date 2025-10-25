@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { requireAuth } from "@/lib/auth";
 
 // GET /api/veiculos/[id] - Obter um veículo específico
 export async function GET(
@@ -40,6 +41,10 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Validar autenticação
+    const authError = await requireAuth(request);
+    if (authError) return authError;
+
     const id = parseInt(params.id);
 
     if (isNaN(id)) {
@@ -69,6 +74,10 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Validar autenticação
+    const authError = await requireAuth(request);
+    if (authError) return authError;
+
     const id = parseInt(params.id);
 
     if (isNaN(id)) {

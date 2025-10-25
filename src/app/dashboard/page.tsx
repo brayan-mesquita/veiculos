@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import { Car, DollarSign, BarChart3, Tag } from "lucide-react";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
@@ -92,13 +93,29 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-background">
       <header className="border-b border-border">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <Link
-            href="/"
-            className="rounded-md bg-secondary px-4 py-2 text-secondary-foreground hover:bg-secondary/80"
-          >
-            Voltar
-          </Link>
+          <h1 className="text-2xl font-bold">Sistema de Veículos</h1>
+          <div className="flex items-center gap-4">
+            <nav className="flex items-center gap-4">
+              <Link href="/veiculos" className="text-sm font-medium hover:text-primary">
+                Veículos
+              </Link>
+              <Link href="/veiculos/novo" className="text-sm font-medium hover:text-primary">
+                Cadastrar
+              </Link>
+              <Link href="/api/docs" className="text-sm font-medium hover:text-primary">
+                API
+              </Link>
+              <Link href="/api-tokens" className="text-sm font-medium hover:text-primary">
+                Tokens API
+              </Link>
+            </nav>
+            <button
+              onClick={() => signOut()}
+              className="rounded-md bg-destructive px-4 py-2 text-destructive-foreground hover:bg-destructive/80"
+            >
+              Sair
+            </button>
+          </div>
         </div>
       </header>
 

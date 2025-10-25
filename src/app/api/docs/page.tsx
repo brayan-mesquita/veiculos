@@ -9,8 +9,8 @@ export default function ApiDocs() {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <h1 className="text-2xl font-bold">Documentação da API</h1>
           <div className="flex items-center gap-4">
-            <Link href="/" className="text-sm font-medium hover:underline">
-              Voltar ao Início
+            <Link href="/dashboard" className="text-sm font-medium hover:underline">
+              Voltar ao Dashboard
             </Link>
             <ThemeToggle />
           </div>
@@ -25,6 +25,24 @@ export default function ApiDocs() {
               Esta API permite gerenciar o inventário de veículos com operações CRUD completas.
               Todas as respostas são retornadas no formato JSON.
             </p>
+            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <h3 className="font-semibold text-blue-800 dark:text-blue-200">Autenticação</h3>
+              <p className="text-sm text-blue-700 dark:text-blue-300 mt-2">
+                Todas as rotas da API exigem autenticação. Use um token de API válido no header:
+              </p>
+              <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded text-sm mt-2">
+                Authorization: Bearer seu-token-aqui
+              </pre>
+              <p className="text-sm text-blue-700 dark:text-blue-300 mt-2">
+                Ou:
+              </p>
+              <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded text-sm">
+                Authorization: ApiKey seu-token-aqui
+              </pre>
+              <p className="text-sm text-blue-700 dark:text-blue-300 mt-2">
+                Gerencie seus tokens de API na seção <Link href="/api-tokens" className="underline">Tokens de API</Link>.
+              </p>
+            </div>
           </div>
           
           <div className="space-y-8">
@@ -37,18 +55,7 @@ export default function ApiDocs() {
               <h3 className="text-xl font-semibold mb-2">Listar todos os veículos</h3>
               <p className="text-sm text-muted-foreground mb-4">
                 Retorna uma lista de todos os veículos cadastrados no sistema.
-                Suporta filtragem por marca e modelo.
               </p>
-              
-              <div className="mb-4">
-                <h4 className="text-sm font-semibold mb-2">Parâmetros de consulta</h4>
-                <div className="bg-muted/50 rounded-md p-4">
-                  <ul className="space-y-2 text-sm">
-                    <li><code>marca</code> - Filtrar por marca do veículo</li>
-                    <li><code>modelo</code> - Filtrar por modelo do veículo</li>
-                  </ul>
-                </div>
-              </div>
               
               <div>
                 <h4 className="text-sm font-semibold mb-2">Exemplo de resposta</h4>

@@ -17,6 +17,8 @@ interface VeiculoData {
   combustivel: string;
   cambio: string;
   status: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export default function EditarVeiculoPage({ params }: { params: { id: string } }) {

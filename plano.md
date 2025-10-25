@@ -43,3 +43,45 @@ Esta seção detalha os passos para integrar a aplicação com o Supabase, aprov
 
 6.  **Testes:**
     *   Teste a integração completa, incluindo autenticação, acesso ao banco de dados e outras funcionalidades do Supabase que você tenha implementado.
+
+## Plano de Autenticação
+
+1.  **Modelo de Administrador:**
+    *   Criar um `model` de administrador no `prisma/schema.prisma` com `id`, `username` e `password`.
+    *   Executar `prisma migrate` para atualizar o banco de dados.
+
+2.  **Usuário Administrador Único:**
+    *   Não haverá rota de registro pública.
+    *   As credenciais do administrador (`ADMIN_USER` e `ADMIN_PASSWORD`) serão fornecidas através de variáveis de ambiente.
+    *   Um script de "seed" do Prisma será criado para popular o banco de dados com o usuário administrador, armazenando a senha com hash (`bcrypt`).
+
+3.  **Lógica de Login:**
+    *   Criar uma rota de API apenas para login (`/api/auth/login`).
+    *   A rota de login validará as credenciais, comparará o hash da senha e gerará um token JWT.
+    *   `next-auth` será usado para gerenciar a sessão.
+
+4.  **Proteção de Rotas:**
+    *   As rotas que necessitam de autenticação serão protegidas.
+    *   Usuários não autenticados serão redirecionados para a página de login.
+    *   Apenas a página de login será criada (sem página de registro).
+
+## Plano de Upload de Fotos com Supabase Storage
+
+1.  **Configuração do Supabase Storage:**
+    *   No painel do Supabase, criar um novo "Bucket" para armazenar as imagens dos veículos.
+    *   Definir as políticas de acesso do bucket (por exemplo, permitir uploads para usuários autenticados).
+
+2.  **Criação da Rota de API para Upload:**
+    *   Criar uma nova rota de API (ex: `/api/veiculos/[id]/upload-foto`) para lidar com o upload de imagens.
+    *   Nesta rota, receber o arquivo da imagem do frontend.
+    *   Usar o cliente `@supabase/supabase-js` para fazer o upload do arquivo para o bucket criado.
+    *   Após o upload, obter a URL pública da imagem.
+
+3.  **Atualização do Modelo de Veículo:**
+    *   Adicionar um campo `imageUrl` (ou similar) ao modelo `Veiculo` no `schema.prisma`.
+    *   Executar uma nova migração do Prisma.
+
+4.  **Atualização da Lógica da Aplicação:**
+    *   Na rota de upload, salvar a URL da imagem no campo `imageUrl` do veículo correspondente no banco de dados.
+    *   No frontend, criar um formulário que permita ao usuário selecionar e enviar uma imagem.
+    *   Exibir a imagem do veículo nas páginas da aplicação.

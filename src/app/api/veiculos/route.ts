@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { requireAuth } from "@/lib/auth";
 
 // GET /api/veiculos - Listar todos os veículos
 export async function GET(request: NextRequest) {
@@ -10,13 +11,26 @@ export async function GET(request: NextRequest) {
 
     const where: any = {};
     if (marca) {
-      where.marca = marca;
+      where.marca = {
+        contains: marca,
+        mode: "insensitive",
+      };
     }
     if (modelo) {
-      where.modelo = modelo;
+      where.modelo = {
+        contains: modelo,
+        mode: "insensitive",
+      };
     }
 
     const veiculos = await prisma.veiculo.findMany({ where });
+
+    if (veiculos.length === 0) {
+      return NextResponse.json(
+        { message: "Nenhum veículo encontrado com os critérios de busca fornecidos." },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json(veiculos);
   } catch (error) {
@@ -28,6 +42,10 @@ export async function GET(request: NextRequest) {
 // POST /api/veiculos - Criar um novo veículo
 export async function POST(request: NextRequest) {
   try {
+    // Validar autenticação
+    const authError = await requireAuth(request);
+    if (authError) return authError;
+
     const body = await request.json();
 
     // Validação básica
