@@ -62,8 +62,6 @@ export default function DashboardClient({ veiculos, marcasData, anosData, valorT
             <nav className="flex items-center gap-4">
               <Link href="/veiculos" className="text-sm font-medium hover:text-primary">Veículos</Link>
               <Link href="/veiculos/novo" className="text-sm font-medium hover:text-primary">Cadastrar</Link>
-              <Link href="/api/docs" className="text-sm font-medium hover:text-primary">API</Link>
-              <Link href="/api-tokens" className="text-sm font-medium hover:text-primary">Tokens API</Link>
             </nav>
             <button
               onClick={handleSignOut}
