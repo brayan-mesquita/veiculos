@@ -1,5 +1,6 @@
 'use client';
 
+import { ThemeToggle } from "@/components/theme-toggle";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
@@ -63,6 +64,7 @@ export default function DashboardClient({ veiculos, marcasData, anosData, valorT
               <Link href="/veiculos" className="text-sm font-medium hover:text-primary">Veículos</Link>
               <Link href="/veiculos/novo" className="text-sm font-medium hover:text-primary">Cadastrar</Link>
             </nav>
+            <ThemeToggle />
             <button
               onClick={handleSignOut}
               className="rounded-md bg-destructive px-4 py-2 text-destructive-foreground hover:bg-destructive/80"
