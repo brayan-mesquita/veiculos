@@ -1,5 +1,6 @@
 "use client";
 
+import { supabase } from '@/lib/supabase/client';
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -18,6 +19,7 @@ export default function NovoVeiculoPage() {
     descricao: "",
     combustivel: "",
     cambio: "",
+    status: "disponivel", // Adicionado status padrão
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -35,23 +37,17 @@ export default function NovoVeiculoPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/veiculos", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const { error } = await supabase.from('veiculos').insert([formData]);
 
-      if (response.ok) {
-        router.push("/veiculos");
+      if (error) {
+        alert(`Erro ao cadastrar veículo: ${error.message}`);
       } else {
-        const error = await response.json();
-        alert(`Erro ao cadastrar veículo: ${error.error}`);
+        router.push("/veiculos");
+        router.refresh(); // Garante que a lista seja atualizada
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao cadastrar veículo:", error);
-      alert("Erro ao cadastrar veículo");
+      alert(`Erro ao cadastrar veículo: ${error.message}`);
     } finally {
       setLoading(false);
     }
